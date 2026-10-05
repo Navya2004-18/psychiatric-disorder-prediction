@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-31#1+ztu&anpm8b=iob+@$l)w6-=gki0ig1yxv)_qy77g-f)37
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["psychiatric-disorder-prediction.onrender.com"]
 
 
 # Application definition
