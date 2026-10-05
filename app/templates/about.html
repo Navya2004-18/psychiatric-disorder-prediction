@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About · MindScope | EEG & ML Psychiatric Research</title>
+  <!-- Google Fonts & Font Awesome · same cohesive design -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ---------- RESET & GLOBAL (mirroring index, consistent) ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fcff;
+      color: #1e2f3e;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ---------- REUSABLE ANIMATIONS ---------- */
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes expandWidth {
+      0% { width: 0%; }
+      100% { width: 80px; }
+    }
+
+    .animate-fade-up {
+      animation: fadeUp 0.8s cubic-bezier(0.2, 0.9, 0.4, 1) forwards;
+    }
+
+    /* ---------- NAVBAR (glassmorphism, sticky) IDENTICAL to index ---------- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .logo i {
+      color: #0f2b4b;
+      font-size: 1.9rem;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover i {
+      transform: scale(1.08) rotate(2deg);
+    }
+
+    .logo span {
+      background: linear-gradient(145deg, #0b2f4e, #1d4a6e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-weight: 500;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding-bottom: 6px;
+      color: #1e3a5f;
+      font-size: 1.05rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a i {
+      margin-right: 6px;
+      font-size: 0.9rem;
+      color: #3a6b92;
+      transition: transform 0.2s;
+    }
+
+    .nav-links a:hover i {
+      transform: translateX(3px);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 2.5px;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+      transition: width 0.25s ease-out;
+      border-radius: 4px;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* active page indicator — about page */
+    .nav-links a.active {
+      font-weight: 700;
+      color: #0a3a5c;
+    }
+    .nav-links a.active::after {
+      width: 100%;
+      background: linear-gradient(90deg, #1d4e6e, #389ec7);
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+    }
+
+    .btn-outline {
+      border: 1.5px solid #1e4a6b;
+      background: transparent;
+      padding: 0.5rem 1.3rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #1e4a6b;
+      transition: all 0.25s;
+    }
+
+    .btn-outline i {
+      margin-right: 5px;
+    }
+
+    .btn-outline:hover {
+      background: #1e4a6b;
+      color: white;
+      border-color: #1e4a6b;
+      box-shadow: 0 8px 14px -6px rgba(30, 74, 107, 0.25);
+      transform: scale(0.98);
+    }
+
+    .btn-solid {
+      background: #0e3347;
+      border: none;
+      padding: 0.5rem 1.6rem;
+      border-radius: 40px;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+      box-shadow: 0 6px 14px rgba(14, 51, 71, 0.15);
+    }
+
+    .btn-solid i {
+      font-size: 0.9rem;
+    }
+
+    .btn-solid:hover {
+      background: #1d4f6e;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 20px -10px rgba(14, 51, 71, 0.25);
+    }
+
+    /* ---------- ABOUT HERO (softer, narrative) ---------- */
+    .about-hero {
+      background: linear-gradient(145deg, #f1f9fe 0%, #e3eef8 100%);
+      padding: 5rem 5% 6rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(0,0,0,0.02);
+    }
+
+    .about-hero::before {
+      content: "🧠⚡";
+      position: absolute;
+      font-size: 16rem;
+      opacity: 0.03;
+      bottom: -40px;
+      right: 20px;
+      transform: rotate(6deg);
+      pointer-events: none;
+    }
+
+    .about-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4rem;
+    }
+
+    .about-text {
+      flex: 1 1 380px;
+      animation: fadeUp 0.8s;
+    }
+
+    .about-text .badge {
+      display: inline-block;
+      background: rgba(25, 118, 154, 0.12);
+      color: #0e4b67;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(55, 148, 186, 0.2);
+      backdrop-filter: blur(4px);
+    }
+
+    .about-text h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #0a2d42;
+      margin-bottom: 1.6rem;
+      letter-spacing: -1.2px;
+    }
+
+    .about-text h1 span {
+      background: linear-gradient(145deg, #166983, #2a779c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .about-text p {
+      font-size: 1.2rem;
+      color: #2c4e63;
+      margin-bottom: 2rem;
+      font-weight: 300;
+      max-width: 600px;
+    }
+
+    .about-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 2rem;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #0f4865;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #46758b;
+      font-weight: 500;
+    }
+
+    .about-visual {
+      flex: 1 1 360px;
+      background: rgba(255,255,255,0.45);
+      backdrop-filter: blur(12px);
+      border-radius: 48px;
+      padding: 2.2rem 2rem;
+      box-shadow: 0 30px 40px -25px rgba(0,70,100,0.2);
+      border: 1px solid rgba(255,255,255,0.6);
+      animation: float 7s infinite ease-in-out;
+    }
+
+    .about-visual i {
+      font-size: 3.5rem;
+      color: #1f6f8c;
+      margin-right: 10px;
+    }
+
+    .visual-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 1.2rem;
+    }
+
+    .visual-chip {
+      background: white;
+      padding: 0.8rem 1.4rem;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.02);
+      font-weight: 500;
+      color: #1f5875;
+    }
+
+    /* ---------- MISSION / APPROACH SECTION ---------- */
+    .mission-section {
+      padding: 5.5rem 5%;
+      background: white;
+    }
+
+    .mission-grid {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.8rem;
+    }
+
+    .mission-card {
+      background: #f9fdff;
+      padding: 2.4rem 2rem;
+      border-radius: 36px;
+      border: 1px solid rgba(144, 202, 225, 0.3);
+      transition: all 0.25s;
+      box-shadow: 0 10px 20px -8px rgba(0,60,90,0.05);
+    }
+
+    .mission-card:hover {
+      transform: translateY(-12px);
+      border-color: #79b8d1;
+      box-shadow: 0 28px 30px -18px rgba(40, 130, 170, 0.2);
+      background: white;
+    }
+
+    .mission-icon {
+      font-size: 2.6rem;
+      color: #267a9e;
+      margin-bottom: 1.4rem;
+    }
+
+    .mission-card h3 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0b3e55;
+      margin-bottom: 1rem;
+      letter-spacing: -0.5px;
+    }
+
+    .mission-card p {
+      color: #3e6275;
+      font-size: 1.05rem;
+    }
+
+    /* ---------- TEAM / LAB SECTION (soft) ---------- */
+    .team-section {
+      padding: 5rem 5%;
+      background: #edf5fa;
+      border-radius: 80px 80px 0 0;
+    }
+
+    .section-title {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 3.5rem;
+    }
+
+    .section-title h2 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #0a3345;
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title .divider {
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #3787a5, #9ac9de);
+      margin: 1.2rem auto;
+      border-radius: 4px;
+      animation: expandWidth 1s ease-out;
+    }
+
+    .team-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .team-member {
+      background: white;
+      padding: 2rem 1.8rem 1.8rem;
+      border-radius: 40px;
+      width: 260px;
+      text-align: center;
+      box-shadow: 0 15px 25px -10px rgba(30, 80, 100, 0.06);
+      transition: all 0.2s;
+    }
+
+    .team-member:hover {
+      transform: scale(1.02);
+      box-shadow: 0 25px 30px -12px rgba(16, 101, 128, 0.15);
+    }
+
+    .avatar {
+      background: linear-gradient(145deg, #c1e2ef, #e1f0f5);
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.2rem;
+      color: #1e627f;
+    }
+
+    .team-member h4 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #104c63;
+    }
+
+    .team-member p {
+      color: #547a8b;
+      font-weight: 500;
+      margin: 0.3rem 0 0.8rem;
+    }
+
+    .team-social {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 0.7rem;
+      color: #3d7f99;
+    }
+
+    /* ---------- TECHNOLOGY STACK (EEG + ML) ---------- */
+    .tech-showcase {
+      padding: 5rem 5%;
+      background: white;
+    }
+
+    .tech-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .tech-desc {
+      flex: 1 1 300px;
+    }
+
+    .tech-desc h2 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: #083d52;
+      margin-bottom: 1.2rem;
+    }
+
+    .tech-desc ul {
+      list-style: none;
+    }
+
+    .tech-desc li {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #2e5e74;
+    }
+
+    .tech-desc i {
+      color: #1f799c;
+      font-size: 1.3rem;
+    }
+
+    .tech-badge-group {
+      flex: 1 1 300px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .tech-badge {
+      background: #ecf6fb;
+      padding: 1.2rem 1.8rem;
+      border-radius: 100px;
+      font-weight: 600;
+      color: #11556b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      border: 1px solid rgba(48, 148, 184, 0.2);
+      transition: 0.15s;
+    }
+
+    .tech-badge:hover {
+      background: #d6ecf5;
+      border-color: #3fa3c1;
+    }
+
+    /* ---------- FOOTER (identical to index) ---------- */
+    footer {
+      background: #0b1f2c;
+      color: #b1d4e0;
+      padding: 2.5rem;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    footer a {
+      color: #b1d4e0;
+      transition: color 0.2s;
+    }
+    footer a:hover {
+      color: white;
+    }
+
+    @media (max-width: 800px) {
+      .navbar { flex-direction: column; gap: 0.8rem; }
+      .nav-links { gap: 1.2rem; }
+      .about-text h1 { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== NAVBAR (same as index, with 'About' active) ========= -->
+  <nav class="navbar">
+    <div class="logo">
+      <i class="fas fa-brain"></i>
+      <span>MindScope</span>
+    </div>
+    <div class="nav-links">
+      <a href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a>
+      <a href="{% url 'about' %}" class="active"><i class="fas fa-microscope"></i> About</a>
+      <a href="{% url 'register' %}"><i class="fas fa-pen-to-square"></i> Registration</a>
+      <a href="{% url 'login' %}"><i class="fas fa-key"></i> Login</a>
+    </div>
+    <div class="nav-right">
+      <a href="{% url 'login' %}" class="btn-outline"><i class="far fa-user"></i> Log in</a>
+      <a href="{% url 'register' %}" class="btn-solid"><i class="fas fa-user-plus"></i> Register</a>
+    </div>
+  </nav>
+
+  <!-- ========== ABOUT HERO (narrative, research story) ========= -->
+  <section class="about-hero">
+    <div class="about-container">
+      <div class="about-text">
+        <span class="badge"><i class="fas-regular fa-flag"></i> SINCE 2021 · TRANSLATIONAL NEUROTECH</span>
+        <h1>Advancing <span>psychiatric diagnosis</span> through EEG & AI</h1>
+        <p>We are an interdisciplinary collective of neuroscientists, clinicians, and machine learning engineers — united to transform resting‑state EEG into a reliable biomarker for major psychiatric disorders.</p>
+        <div class="about-stats">
+          <div class="stat-item">
+            <span class="stat-number">1.2k+</span>
+            <span class="stat-label">participants</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">6</span>
+            <span class="stat-label">disorders</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">7</span>
+            <span class="stat-label">clinical sites</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-visual">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.2rem;">
+          <i class="fas fa-wave-square"></i>
+          <span style="font-weight: 700; font-size: 1.6rem; color: #0f546e;">resting‑state</span>
+        </div>
+        <p style="color: #326d82; margin-bottom: 1.8rem; font-style: italic;">“64‑channel EEG, eyes‑closed, 5 minutes — rich spectral topography.”</p>
+        <div class="visual-grid">
+          <span class="visual-chip"><i class="fas fa-chart-scatter"></i> spectral power</span>
+          <span class="visual-chip"><i class="fas fa-link"></i> functional connectivity</span>
+          <span class="visual-chip"><i class="fas fa-chart-line"></i> microstates</span>
+          <span class="visual-chip"><i class="fas fa-robot"></i> ensemble ML</span>
+          <span class="visual-chip"><i class="fas fa-shield"></i> explainable AI</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== MISSION: WHY WE DO THIS ========= -->
+  <section class="mission-section">
+    <div class="mission-grid">
+      <div class="mission-card animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="mission-icon"><i class="fas fa-bullseye"></i></div>
+        <h3>The gap</h3>
+        <p>Psychiatric disorders still rely on subjective symptom checklists. Delays in accurate diagnosis can last years. We aim to shorten that window with objective neural markers.</p>
+      </div>
+      <div class="mission-card animate-fade-up" style="animation-delay: 0.2s;">
+        <div class="mission-icon"><i class="fas fa-dna"></i></div>
+        <h3>Our approach</h3>
+        <p>High‑density resting EEG combined with robust machine learning. We identify disorder‑specific signatures across MDD, schizophrenia, bipolar, anxiety, OCD, PTSD.</p>
+      </div>
+      <div class="mission-card animate-fade-up" style="animation-delay: 0.3s;">
+        <div class="mission-icon"><i class="fas fa-hand-holding-heart"></i></div>
+        <h3>Open & reproducible</h3>
+        <p>We pre‑register analyses, share pretrained models, and collaborate with academic hospitals. Our dream: accessible, low‑cost EEG screening.</p>
+      </div>
+      <div class="mission-card animate-fade-up" style="animation-delay: 0.4s;">
+        <div class="mission-icon"><i class="fas fa-shield-alt"></i></div>
+        <h3>Ethics first</h3>
+        <p>IRB‑approved, GDPR & HIPAA compliant. We prioritize patient privacy and algorithmic fairness across age, gender, and ethnicity.</p>
+      </div>
+    </div>
+  </section>
+
+  
+  <!-- ========== TECHNOLOGY DEEP DIVE (EEG + ML) ========= -->
+  <section class="tech-showcase">
+    <div class="tech-container">
+      <div class="tech-desc">
+        <h2><i class="fas fa-cogs" style="margin-right: 10px;"></i> Built with scientific rigor</h2>
+        <ul>
+          <li><i class="fas fa-check-circle"></i> 64‑channel EEG, 5 min resting state</li>
+          <li><i class="fas fa-check-circle"></i> Automated artifact rejection (ICA + wavelet)</li>
+          <li><i class="fas fa-check-circle"></i> Spectral + connectivity + microstate features</li>
+          <li><i class="fas fa-check-circle"></i> Gradient boosting, attention CNN, ensemble</li>
+          <li><i class="fas fa-check-circle"></i> SHAP & LIME for biomarker localization</li>
+          <li><i class="fas fa-check-circle"></i> Multi‑site domain generalisation</li>
+        </ul>
+      </div>
+      <div class="tech-badge-group">
+        <span class="tech-badge"><i class="fas fa-bolt"></i> Python · MNE</span>
+        <span class="tech-badge"><i class="fas fa-brain"></i> PyTorch / sk-learn</span>
+        <span class="tech-badge"><i class="fas fa-chart-pie"></i> connectivity matrices</span>
+        <span class="tech-badge"><i class="fas fa-waveform"></i> wavelet scattering</span>
+        <span class="tech-badge"><i class="fas fa-project-diagram"></i> graph neural nets</span>
+        <span class="tech-badge"><i class="fas fa-lock"></i> federated learning</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== COLLABORATORS & AFFILIATIONS ========= -->
+  <div style="background: #eaf1f7; padding: 3rem 5%; border-radius: 60px 60px 0 0; margin-top: 0;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-around; gap: 2rem;">
+      <span style="display: flex; gap: 8px; font-weight: 600; color: #1b617b;"><i class="fas fa-university"></i> University of Zurich</span>
+      <span style="display: flex; gap: 8px; font-weight: 600; color: #1b617b;"><i class="fas fa-hospital"></i> McLean Hospital</span>
+      <span style="display: flex; gap: 8px; font-weight: 600; color: #1b617b;"><i class="fas fa-microscope"></i> Max Planck Institute</span>
+      <span style="display: flex; gap: 8px; font-weight: 600; color: #1b617b;"><i class="fas fa-database"></i> OpenNeuro</span>
+    </div>
+  </div>
+
+  <!-- ========== FOOTER ========= -->
+  <footer>
+    <div style="display: flex; justify-content: center; gap: 3rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+      <a href="#"><i class="fas fa-home"></i> Home</a>
+      <a href="#"><i class="fas fa-flask"></i> About</a>
+      <a href="#"><i class="fas fa-pen-to-square"></i> Registration</a>
+      <a href="#"><i class="fas fa-key"></i> Login</a>
+      <a href="#"><i class="fas fa-envelope"></i> Contact</a>
+    </div>
+    <p style="color: #99b8c9;">© 2025 MindScope — Identification of Major Psychiatric Disorders From Resting‑State EEG & Machine Learning</p>
+    <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.8;">About page · Non‑commercial research preview</p>
+  </footer>
+
+  <!-- subtle script (just for demo) -->
+  <script>
+    // keep the same spirit — lightweight
+    (function() {
+      console.log('MindScope · About page — bridging EEG and psychiatry');
+    })();
+  </script>
+</body>
+</html>

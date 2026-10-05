@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register · MindScope | EEG & ML Research Access</title>
+  <!-- Google Fonts + Font Awesome – consistent with index/about -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ---------- GLOBAL (same design system) ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f6fa;
+      color: #1e2f3e;
+      line-height: 1.5;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ---------- ANIMATIONS (efficient, subtle) ---------- */
+    @keyframes fadeSlideUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .animate-form {
+      animation: fadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.2, 1) forwards;
+    }
+
+    /* ---------- NAVBAR (identical to index/about) ---------- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .logo i {
+      color: #0f2b4b;
+      font-size: 1.9rem;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover i {
+      transform: scale(1.08) rotate(2deg);
+    }
+
+    .logo span {
+      background: linear-gradient(145deg, #0b2f4e, #1d4a6e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-weight: 500;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding-bottom: 6px;
+      color: #1e3a5f;
+      font-size: 1.05rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a i {
+      margin-right: 6px;
+      font-size: 0.9rem;
+      color: #3a6b92;
+      transition: transform 0.2s;
+    }
+
+    .nav-links a:hover i {
+      transform: translateX(3px);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 2.5px;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+      transition: width 0.25s ease-out;
+      border-radius: 4px;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* active state: registration */
+    .nav-links a.active {
+      font-weight: 700;
+      color: #0a3a5c;
+    }
+    .nav-links a.active::after {
+      width: 100%;
+      background: linear-gradient(90deg, #1d4e6e, #389ec7);
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+    }
+
+    .btn-outline {
+      border: 1.5px solid #1e4a6b;
+      background: transparent;
+      padding: 0.5rem 1.3rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #1e4a6b;
+      transition: all 0.25s;
+    }
+
+    .btn-outline i {
+      margin-right: 5px;
+    }
+
+    .btn-outline:hover {
+      background: #1e4a6b;
+      color: white;
+      border-color: #1e4a6b;
+      box-shadow: 0 8px 14px -6px rgba(30, 74, 107, 0.25);
+      transform: scale(0.98);
+    }
+
+    .btn-solid {
+      background: #0e3347;
+      border: none;
+      padding: 0.5rem 1.6rem;
+      border-radius: 40px;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+      box-shadow: 0 6px 14px rgba(14, 51, 71, 0.15);
+    }
+
+    .btn-solid i {
+      font-size: 0.9rem;
+    }
+
+    .btn-solid:hover {
+      background: #1d4f6e;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 20px -10px rgba(14, 51, 71, 0.25);
+    }
+
+    /* ---------- REGISTRATION PAGE SPECIFIC ---------- */
+    .registration-hero {
+      background: linear-gradient(145deg, #e5f0f7, #daeaf1);
+      padding: 3.5rem 5% 5rem;
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle EEG-like background motif */
+    .registration-hero::before {
+      content: "⚡🧠⚡";
+      position: absolute;
+      font-size: 14rem;
+      opacity: 0.02;
+      bottom: -20px;
+      right: 0;
+      transform: rotate(-8deg);
+      pointer-events: none;
+      letter-spacing: 30px;
+    }
+
+    .registration-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 3.5rem;
+      width: 100%;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* ------- LEFT COLUMN : value prop (sleek) ------- */
+    .reg-left {
+      flex: 1 1 380px;
+      color: #0a3142;
+    }
+
+    .reg-left .badge {
+      display: inline-block;
+      background: rgba(24, 100, 120, 0.12);
+      color: #145e74;
+      padding: 0.5rem 1.4rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 1.2px;
+      margin-bottom: 1.8rem;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(28, 128, 148, 0.2);
+    }
+
+    .reg-left h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.4rem;
+      letter-spacing: -1px;
+    }
+
+    .reg-left h1 span {
+      background: linear-gradient(145deg, #0a546b, #1f799c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .reg-left p {
+      font-size: 1.2rem;
+      color: #2e5f72;
+      margin-bottom: 2rem;
+      font-weight: 300;
+      max-width: 500px;
+    }
+
+    .benefit-list {
+      list-style: none;
+      margin-top: 2.2rem;
+    }
+
+    .benefit-list li {
+      margin-bottom: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 1.05rem;
+      color: #1a5268;
+      font-weight: 450;
+    }
+
+    .benefit-list i {
+      color: #1e7f9e;
+      font-size: 1.25rem;
+      width: 28px;
+      text-align: center;
+    }
+
+    /* ------- RIGHT COLUMN : registration form (glass) ------- */
+    .reg-right {
+      flex: 1 1 440px;
+      background: rgba(255, 255, 255, 0.70);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 48px;
+      padding: 2.8rem 2.6rem;
+      box-shadow: 0 30px 50px -25px rgba(0,70,100,0.2);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: transform 0.2s;
+      animation: float 8s infinite ease-in-out;
+    }
+
+    .reg-right:hover {
+      box-shadow: 0 35px 55px -22px rgba(27, 97, 121, 0.2);
+    }
+
+    .reg-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .reg-header i {
+      font-size: 2.2rem;
+      color: #1b6f8b;
+    }
+
+    .reg-header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #09455b;
+      letter-spacing: -0.5px;
+    }
+
+    /* ---------- FORM STYLES (fields: username, email, password, confirm, contact, address) ---------- */
+    .form-group {
+      margin-bottom: 1.35rem;
+      position: relative;
+    }
+
+    .form-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1f5770;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.3px;
+    }
+
+    .form-group label i {
+      font-size: 0.95rem;
+      color: #24728b;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper i.prefix-icon {
+      position: absolute;
+      left: 16px;
+      color: #4b7e94;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    .input-wrapper input,
+    .input-wrapper textarea {
+      width: 100%;
+      padding: 0.9rem 1rem 0.9rem 2.8rem;
+      border: 1.5px solid rgba(146, 194, 209, 0.4);
+      border-radius: 36px;
+      font-size: 1rem;
+      background: rgba(255,255,255,0.9);
+      transition: all 0.2s ease;
+      color: #1e3e4f;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .input-wrapper textarea {
+      padding: 0.9rem 1rem 0.9rem 2.8rem;
+      resize: vertical;
+      min-height: 90px;
+      border-radius: 28px;
+    }
+
+    .input-wrapper input:focus,
+    .input-wrapper textarea:focus {
+      border-color: #2c93b3;
+      background: white;
+      box-shadow: 0 6px 16px rgba(45, 145, 180, 0.12);
+      outline: none;
+    }
+
+    .input-wrapper input::placeholder,
+    .input-wrapper textarea::placeholder {
+      color: #8aaebb;
+      font-weight: 300;
+    }
+
+    /* password hint small */
+    .password-hint {
+      font-size: 0.7rem;
+      color: #507c8b;
+      margin-top: 0.3rem;
+      margin-left: 1rem;
+    }
+
+    /* terms checkbox */
+    .terms {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1.8rem 0 1.4rem;
+      font-size: 0.95rem;
+    }
+
+    .terms input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #1f708b;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-register {
+      width: 100%;
+      background: linear-gradient(105deg, #16647c, #1e8aa8);
+      border: none;
+      padding: 1.1rem;
+      border-radius: 60px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      transition: all 0.2s;
+      box-shadow: 0 16px 24px -12px rgba(19, 105, 122, 0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-register i {
+      font-size: 1.2rem;
+    }
+
+    .btn-register:hover {
+      background: linear-gradient(105deg, #0e546b, #19738f);
+      transform: scale(1.01) translateY(-3px);
+      box-shadow: 0 26px 30px -14px rgba(23, 112, 126, 0.4);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 1.8rem;
+      color: #2b6a80;
+    }
+
+    .login-link a {
+      color: #0a4b63;
+      font-weight: 700;
+      border-bottom: 2px solid rgba(27, 129, 155, 0.3);
+      transition: 0.2s;
+    }
+
+    .login-link a:hover {
+      border-bottom-color: #1b7f9c;
+    }
+
+    /* ---------- FOOTER (same as global) ---------- */
+    footer {
+      background: #0b1f2c;
+      color: #b1d4e0;
+      padding: 2.5rem;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+    footer a { color: #b1d4e0; }
+    footer a:hover { color: white; }
+
+    @media (max-width: 950px) {
+      .navbar { flex-direction: column; }
+      .nav-links { gap: 1.2rem; }
+      .registration-hero { padding: 2rem 5%; }
+      .reg-left h1 { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== NAVBAR (active: Registration) ========= -->
+  <nav class="navbar">
+    <div class="logo">
+      <i class="fas fa-brain"></i>
+      <span>MindScope</span>
+    </div>
+    <div class="nav-links">
+      <a href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a>
+      <a href="{% url 'about' %}" ><i class="fas fa-microscope"></i> About</a>
+      <a href="{% url 'register' %}" class="active"><i class="fas fa-pen-to-square"></i> Registration</a>
+      <a href="{% url 'login' %}"><i class="fas fa-key"></i> Login</a>
+    </div>
+    <div class="nav-right">
+      <a href="{% url 'login' %}" class="btn-outline"><i class="far fa-user"></i> Log in</a>
+      <a href="{% url 'register' %}" class="btn-solid"><i class="fas fa-user-plus"></i> Register</a>
+    </div>
+  </nav>
+
+  <!-- ========== REGISTRATION PAGE (fields: Username, Email, Password, Confirm, Contact, Address) ========= -->
+  <section class="registration-hero">
+    <div class="registration-container">
+      <!-- LEFT: value proposition (research access) -->
+      <div class="reg-left animate-form">
+        <span class="badge"><i class="fas-regular fa-flask"></i>  EARLY ACCESS · RESEARCHER PORTAL</span>
+        <h1>Join the <span>EEG & ML</span> consortium</h1>
+        <p>Create your account to access resting‑state datasets, pretrained models, and collaborate on precision psychiatry.</p>
+        <ul class="benefit-list">
+          <li><i class="fas fa-database"></i>  Annotated EEG (MDD, schizophrenia, bipolar, OCD, PTSD, anxiety)</li>
+          <li><i class="fas fa-chart-scatter"></i>  Spectral + connectivity feature matrices</li>
+          <li><i class="fas fa-robot"></i>  Download ensemble models (PyTorch, sklearn)</li>
+          <li><i class="fas fa-file-alt"></i>  Research preprints & analysis notebooks</li>
+        </ul>
+      </div>
+
+      <!-- RIGHT: registration form (exactly fields requested) -->
+      <div class="reg-right animate-form" style="animation-delay: 0.1s;">
+        <div class="reg-header">
+          <i class="fas fa-id-card"></i>
+          <h2>Create account</h2>
+        </div>
+
+        <!-- ===== REGISTRATION FORM ===== -->
+        <!-- fields: Username, Email, Password, Confirm password, Contact, Address -->
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+          <!-- 1. Username -->
+          <div class="form-group">
+            <label><i class="fas fa-user-circle"></i> Username</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user prefix-icon"></i>
+              <input type="text" placeholder="Choose a username" autocomplete="username" name="name" required>
+            </div>
+          </div>
+
+          <!-- 2. Email -->
+          <div class="form-group">
+            <label><i class="fas fa-envelope"></i> Email</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope prefix-icon"></i>
+              <input type="email" placeholder="your@email.com" autocomplete="email" name="email" required>
+            </div>
+          </div>
+
+          <!-- 3. Password -->
+          <div class="form-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-key prefix-icon"></i>
+              <input type="password" placeholder="Create a strong password" autocomplete="new-password" name="password" required>
+            </div>
+            <div class="password-hint">
+              <i class="fas fa-info-circle"></i> min. 8 characters, 1 number & 1 symbol
+            </div>
+          </div>
+
+          <!-- 4. Confirm Password -->
+          <div class="form-group">
+            <label><i class="fas fa-lock"></i> Confirm password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-check-circle prefix-icon"></i>
+              <input type="password" placeholder="Re-enter password" autocomplete="off" name="confirmPassword" required>
+            </div>
+          </div>
+
+          <!-- 5. Contact (phone / mobile) -->
+          <div class="form-group">
+            <label><i class="fas fa-phone-alt"></i> Contact</label>
+            <div class="input-wrapper">
+              <i class="fas fa-mobile-alt prefix-icon"></i>
+              <input type="tel" placeholder="Phone number (with country code)" autocomplete="tel" name="contact" required>
+            </div>
+          </div>
+
+          <!-- 6. Address (multiline, field) -->
+          <div class="form-group">
+            <label><i class="fas fa-map-marker-alt"></i> Address</label>
+            <div class="input-wrapper">
+              <i class="fas fa-address-card prefix-icon"></i>
+              <textarea placeholder="Institution / lab / street address " name="address" required></textarea>
+            </div>
+          </div>
+
+          
+
+          <!-- submit button -->
+          <button type="submit" class="btn-register">
+            <i class="fas fa-user-plus"></i> Register for access
+          </button>
+
+          <div class="login-link">
+            Already have an account? <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Sign in</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+  <script>
+    {% if messages %}
+        {% for message in messages %}
+            alert('{{ message }}')
+        {% endfor %}
+    {% endif %}
+  </script>
+  <!-- ========== FOOTER ========= -->
+  <footer>
+    <div style="display: flex; justify-content: center; gap: 3rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+      <a href="#"><i class="fas fa-home"></i> Home</a>
+      <a href="#"><i class="fas fa-flask"></i> About</a>
+      <a href="#"><i class="fas fa-pen-to-square"></i> Registration</a>
+      <a href="#"><i class="fas fa-key"></i> Login</a>
+      <a href="#"><i class="fas fa-envelope"></i> Contact</a>
+    </div>
+    <p style="color: #99b8c9;">© 2025 MindScope — Identification of Major Psychiatric Disorders From Resting‑State EEG & Machine Learning</p>
+    <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.8;">Registration page · Non‑commercial research preview</p>
+  </footer>
+
+  <!-- lightweight script (password match indicator can be added) — optional -->
+  <script>
+    (function() {
+      console.log('MindScope registration — fields: username, email, password, confirm, contact, address');
+      // you can extend with real validation later
+    })();
+  </script>
+</body>
+</html>

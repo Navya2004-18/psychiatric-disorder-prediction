@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Dataset · MindScope | EEG & ML Research</title>
+  <!-- Google Fonts + Font Awesome – consistent design system -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- DataTables for enhanced table interaction (sort, search, pagination) - efficient & modern -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+  <style>
+    /* ---------- GLOBAL (identical to other pages) ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4fafd;
+      color: #1e2f3e;
+      line-height: 1.5;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ---------- ANIMATIONS ---------- */
+    @keyframes fadeSlideUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-up {
+      animation: fadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.2, 1) forwards;
+    }
+
+    /* ---------- NAVBAR (exact same as all pages) ---------- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .logo i {
+      color: #0f2b4b;
+      font-size: 1.9rem;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover i {
+      transform: scale(1.08) rotate(2deg);
+    }
+
+    .logo span {
+      background: linear-gradient(145deg, #0b2f4e, #1d4a6e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-weight: 500;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding-bottom: 6px;
+      color: #1e3a5f;
+      font-size: 1.05rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a i {
+      margin-right: 6px;
+      font-size: 0.9rem;
+      color: #3a6b92;
+      transition: transform 0.2s;
+    }
+
+    .nav-links a:hover i {
+      transform: translateX(3px);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 2.5px;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+      transition: width 0.25s ease-out;
+      border-radius: 4px;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* active page: Dataset (custom) */
+    .nav-links a.active {
+      font-weight: 700;
+      color: #0a3a5c;
+    }
+    .nav-links a.active::after {
+      width: 100%;
+      background: linear-gradient(90deg, #1d4e6e, #389ec7);
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+    }
+
+    .btn-outline {
+      border: 1.5px solid #1e4a6b;
+      background: transparent;
+      padding: 0.5rem 1.3rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #1e4a6b;
+      transition: all 0.25s;
+    }
+
+    .btn-outline i {
+      margin-right: 5px;
+    }
+
+    .btn-outline:hover {
+      background: #1e4a6b;
+      color: white;
+      border-color: #1e4a6b;
+      box-shadow: 0 8px 14px -6px rgba(30, 74, 107, 0.25);
+      transform: scale(0.98);
+    }
+
+    .btn-solid {
+      background: #0e3347;
+      border: none;
+      padding: 0.5rem 1.6rem;
+      border-radius: 40px;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+      box-shadow: 0 6px 14px rgba(14, 51, 71, 0.15);
+    }
+
+    .btn-solid i {
+      font-size: 0.9rem;
+    }
+
+    .btn-solid:hover {
+      background: #1d4f6e;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 20px -10px rgba(14, 51, 71, 0.25);
+    }
+
+    /* ---------- DATASET PAGE SPECIFIC STYLES ---------- */
+    .dataset-hero {
+      background: linear-gradient(145deg, #e7f1f7, #d6e9f0);
+      padding: 2.8rem 5% 3.5rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(0,0,0,0.02);
+    }
+
+    .dataset-hero::before {
+      content: "📊🧠📈";
+      position: absolute;
+      font-size: 12rem;
+      opacity: 0.02;
+      bottom: -20px;
+      right: 30px;
+      transform: rotate(5deg);
+      pointer-events: none;
+    }
+
+    .dataset-header {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dataset-title h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #0a3a4f;
+      letter-spacing: -1px;
+      margin-bottom: 0.3rem;
+    }
+
+    .dataset-title h1 span {
+      background: linear-gradient(145deg, #0e5f74, #20859b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .dataset-title p {
+      font-size: 1.2rem;
+      color: #306c7e;
+      font-weight: 300;
+      margin-top: 0.6rem;
+    }
+
+    .dataset-badge {
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(8px);
+      padding: 1.2rem 2.2rem;
+      border-radius: 80px;
+      display: flex;
+      gap: 2.2rem;
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 10px 20px -12px rgba(0,0,0,0.1);
+    }
+
+    .badge-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .badge-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0e5b6b;
+      line-height: 1;
+    }
+
+    .badge-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #386e7c;
+    }
+
+    /* ---------- TABLE CONTAINER (modern card) ---------- */
+    .table-container {
+      max-width: 1500px;
+      margin: 2rem auto 4rem;
+      padding: 0 5%;
+    }
+
+    .data-card {
+      background: white;
+      border-radius: 40px;
+      padding: 2rem 2rem;
+      box-shadow: 0 25px 40px -18px rgba(5, 70, 90, 0.15);
+      border: 1px solid rgba(255,255,255,0.5);
+      backdrop-filter: blur(4px);
+      transition: all 0.2s;
+    }
+
+    .data-card:hover {
+      box-shadow: 0 30px 50px -18px rgba(20, 110, 130, 0.18);
+    }
+
+    /* table toolbar */
+    .table-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .table-toolbar h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #0a4f63;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .csv-info {
+      background: #e2eff5;
+      padding: 0.6rem 1.4rem;
+      border-radius: 50px;
+      color: #0e5f70;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    /* ---------- DATATABLE CUSTOMIZATION (modern, clean) ---------- */
+    .dataTables_wrapper {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .dataTables_length label,
+    .dataTables_filter label {
+      font-weight: 500;
+      color: #1a5e6e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dataTables_length select,
+    .dataTables_filter input {
+      border: 1.5px solid rgba(65, 145, 161, 0.2);
+      border-radius: 30px !important;
+      padding: 0.5rem 1rem !important;
+      font-size: 0.9rem;
+      background: white;
+      transition: all 0.15s;
+    }
+
+    .dataTables_filter input {
+      padding-left: 2rem !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%23388294'%3E%3Cpath d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 12px center;
+      background-size: 16px;
+    }
+
+    .dataTables_filter input:focus {
+      border-color: #2d97af;
+      box-shadow: 0 0 0 3px rgba(45, 151, 175, 0.1);
+      outline: none;
+    }
+
+    .dataTables_paginate {
+      margin-top: 1.5rem;
+    }
+
+    .paginate_button {
+      border-radius: 30px !important;
+      margin: 0 3px;
+    }
+
+    .dataTables_info {
+      color: #2a6d7e;
+      font-weight: 500;
+    }
+
+    /* ---------- TABLE STYLES (elevated) ---------- */
+    table.dataTable {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 40, 50, 0.02);
+    }
+
+    table.dataTable thead th {
+      background: linear-gradient(165deg, #e1f0f5, #d0e6ed);
+      color: #0d4c5c;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 1.2rem 0.8rem;
+      border-bottom: 2px solid rgba(80, 164, 182, 0.2);
+    }
+
+    table.dataTable tbody td {
+      padding: 1rem 0.8rem;
+      border-bottom: 1px solid rgba(156, 201, 211, 0.2);
+      color: #1e4c5c;
+      font-weight: 400;
+      background: white;
+    }
+
+    table.dataTable tbody tr:hover td {
+      background: #f0faff;
+    }
+
+    /* first and last td border radius */
+    table.dataTable thead th:first-child { border-top-left-radius: 20px; }
+    table.dataTable thead th:last-child { border-top-right-radius: 20px; }
+    
+    .footer-note {
+      margin-top: 2rem;
+      text-align: center;
+      color: #3f7e8c;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    /* ---------- FOOTER (consistent) ---------- */
+    footer {
+      background: #0b1f2c;
+      color: #b1d4e0;
+      padding: 2.5rem;
+      text-align: center;
+      font-size: 0.95rem;
+      margin-top: 2rem;
+    }
+    footer a { color: #b1d4e0; }
+    footer a:hover { color: white; }
+
+    @media (max-width: 900px) {
+      .navbar { flex-direction: column; }
+      .dataset-header { flex-direction: column; align-items: flex-start; }
+      .dataset-badge { margin-top: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== NAVBAR (active: View Dataset - custom active) ========= -->
+  <nav class="navbar">
+    <div class="logo">
+      <i class="fas fa-brain"></i>
+      <span>MindScope</span>
+    </div>
+    <div class="nav-links">
+      <a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
+      <a href="{% url 'view_dataset' %}"><i class="fas fa-microscope"></i> View Dataset</a>
+      <a href="{% url 'prediction' %}" class="register-highlight"><i class="fas fa-pen-to-square"></i> Prediction</a>
+      <a href="{% url 'logout' %}"><i class="fas fa-key"></i> Logout</a>
+    </div>
+  </nav>
+
+  <!-- ========== DATASET HERO ========= -->
+  <section class="dataset-hero animate-up">
+    <div class="dataset-header">
+      <div class="dataset-title">
+        <h1><span>EEG</span> · Resting-State Dataset</h1>
+        <p><i class="fas fa-database"></i> Final_dataset.csv — first 200 rows preview</p>
+      </div>
+      <div class="dataset-badge">
+        <div class="badge-item">
+          <span class="badge-number">200</span>
+          <span class="badge-label">ROWS</span>
+        </div>
+        <div class="badge-item">
+          <span class="badge-number" id="col-count">23</span>
+          <span class="badge-label">COLUMNS</span>
+        </div>
+        <div class="badge-item">
+          <span class="badge-number">⚡64</span>
+          <span class="badge-label">EEG CH</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== DATASET TABLE ========= -->
+  <div class="table-container animate-up" style="animation-delay: 0.1s;">
+    <div class="data-card">
+      <div class="table-toolbar">
+        <h2>
+          <i class="fas fa-chart-simple" style="color: #1a7a8c;"></i> 
+          Feature Matrix Preview
+        </h2>
+        <span class="csv-info">
+          <i class="fas fa-file-csv"></i> Final_dataset.csv · first 200 entries
+        </span>
+      </div>
+
+      <!-- 
+        ============================================================
+        DJANGO INTEGRATION POINT:
+        The variable {{ col }} contains df.head(200).to_html() 
+        from view_dataset context. 
+        We wrap it inside a div with id 'dataset-table' and 
+        apply DataTables initialization for sorting, search, pagination.
+        ============================================================
+      -->
+      <div id="dataset-table-wrapper" style="overflow-x: auto;">
+        <!-- 
+          This is where the DataFrame HTML is injected.
+          In Django template, {{ col|safe }} renders the table.
+          We add id="data-table" so DataTables can enhance it.
+        -->
+        <table id="data-table" class="display responsive nowrap" style="width:100%;">
+          <!-- 
+            IMPORTANT: 
+            The actual table content comes from Django's {{ col }}.
+            The following is a PLACEHOLDER example to demonstrate structure.
+            In your real deployment, the Jinja code {{ col|safe }} will generate 
+            full <thead>/<tbody> with data. This example includes a realistic 
+            preview of what EEG dataset looks like.
+          -->
+          {{ col|safe }}
+        </table>
+        <!-- DEMO NOTE: In this static HTML preview, we simulate the dataset table 
+             because {{ col }} is not rendered. A JavaScript function will generate
+             a realistic EEG feature matrix preview to showcase the design. 
+             When you integrate with Django, replace the entire tbody with {{ col|safe }}.
+        -->
+      </div>
+
+      <!-- additional dataset info -->
+      <div class="footer-note">
+        <span><i class="fas-regular fa-flask"></i> 6 disorder classes: MDD, SCZ, BPD, OCD, PTSD, ANX</span>
+        <span><i class="fas fa-sliders-h"></i> Spectral bands: delta, theta, alpha, beta, gamma</span>
+        <span><i class="fas fa-connectdevelop"></i> Functional connectivity (PLV, COH)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== FOOTER ========= -->
+  <footer>
+    <div style="display: flex; justify-content: center; gap: 3rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+      <a href="#"><i class="fas fa-home"></i> Home</a>
+      <a href="#"><i class="fas fa-flask"></i> About</a>
+      <a href="#"><i class="fas fa-pen-to-square"></i> Registration</a>
+      <a href="#"><i class="fas fa-key"></i> Login</a>
+      <a href="#"><i class="fas fa-table"></i> Dataset</a>
+    </div>
+    <p style="color: #99b8c9;">© 2025 MindScope — Identification of Major Psychiatric Disorders From Resting‑State EEG & Machine Learning</p>
+    <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.8;">Dataset preview · research use only</p>
+  </footer>
+
+  <!-- jQuery and DataTables -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  
+  <!-- 
+    ============================================================
+    SIMULATION FOR STATIC PREVIEW:
+    Since this is a static HTML demo and Django {{ col }} is not 
+    available, we generate a SAMPLE EEG dataset to show the design.
+    
+    IN YOUR DJANGO TEMPLATE:
+    1. Remove the sample generation code inside $(document).ready
+    2. Keep the DataTables initialization and the {{ col|safe }} 
+       in the table body.
+    3. Ensure you have {% load static %} at top if needed.
+    ============================================================
+  -->
+  <script>
+    $(document).ready(function() {
+      // ========== SAMPLE DATA GENERATION FOR STATIC PREVIEW ==========
+      // This simulates the output of df.head(200).to_html()
+      // When integrating with Django, REMOVE this entire sample block
+      // and ensure your table is populated with {{ col|safe }}.
+      
+      // Check if table is empty (static preview) and populate with sample
+      if ($('#data-table tbody').length === 0 || $('#data-table tbody tr').length === 0) {
+        console.log("Static preview: generating sample EEG dataset (first 200 rows simulation)");
+        
+        // Create table structure if not present
+        let sampleHTML = `
+          <thead>
+            <tr>
+              <th>subject_id</th>
+              <th>age</th>
+              <th>gender</th>
+              <th>diagnosis</th>
+              <th>site</th>
+              <th>delta_Fp1</th>
+              <th>theta_Fp1</th>
+              <th>alpha_Fp1</th>
+              <th>beta_Fp1</th>
+              <th>gamma_Fp1</th>
+              <th>delta_Fp2</th>
+              <th>theta_Fp2</th>
+              <th>alpha_Fp2</th>
+              <th>beta_Fp2</th>
+              <th>gamma_Fp2</th>
+              <th>PLV_prefrontal</th>
+              <th>COH_frontal</th>
+              <th>microstate_A</th>
+              <th>microstate_B</th>
+              <th>microstate_C</th>
+              <th>microstate_D</th>
+              <th>QC_rating</th>
+            </tr>
+          </thead>
+          <tbody>
+        `;
+
+        // Generate 20 sample rows for preview (in real case you'll have 200)
+        const diagnoses = ['MDD', 'SCZ', 'BPD', 'OCD', 'PTSD', 'ANX', 'HC'];
+        const sites = ['ZRH', 'BOS', 'MPI', 'LON', 'NYC'];
+        const genders = ['F', 'M', 'NB'];
+        
+        for (let i = 1; i <= 20; i++) {
+          let diag = diagnoses[Math.floor(Math.random() * diagnoses.length)];
+          let site = sites[Math.floor(Math.random() * sites.length)];
+          let gender = genders[Math.floor(Math.random() * genders.length)];
+          let age = Math.floor(Math.random() * 35) + 20;
+          
+          sampleHTML += `<tr>
+            <td>sub-${String(i).padStart(3, '0')}</td>
+            <td>${age}</td>
+            <td>${gender}</td>
+            <td><span style="background:rgba(33,125,143,0.1); padding:4px 12px; border-radius:30px; font-weight:600;">${diag}</span></td>
+            <td>${site}</td>
+            <td>${(Math.random() * 2 + 1).toFixed(3)}</td>
+            <td>${(Math.random() * 1.5 + 0.5).toFixed(3)}</td>
+            <td>${(Math.random() * 2 + 0.8).toFixed(3)}</td>
+            <td>${(Math.random() * 1.2 + 0.3).toFixed(3)}</td>
+            <td>${(Math.random() * 0.8 + 0.1).toFixed(3)}</td>
+            <td>${(Math.random() * 2 + 1).toFixed(3)}</td>
+            <td>${(Math.random() * 1.5 + 0.5).toFixed(3)}</td>
+            <td>${(Math.random() * 2 + 0.8).toFixed(3)}</td>
+            <td>${(Math.random() * 1.2 + 0.3).toFixed(3)}</td>
+            <td>${(Math.random() * 0.8 + 0.1).toFixed(3)}</td>
+            <td>${(Math.random() * 0.5 + 0.2).toFixed(3)}</td>
+            <td>${(Math.random() * 0.6 + 0.1).toFixed(3)}</td>
+            <td>${(Math.random() * 30 + 10).toFixed(1)}</td>
+            <td>${(Math.random() * 25 + 15).toFixed(1)}</td>
+            <td>${(Math.random() * 20 + 20).toFixed(1)}</td>
+            <td>${(Math.random() * 15 + 10).toFixed(1)}</td>
+            <td>${(Math.random() * 0.5 + 0.5).toFixed(2)}</td>
+          </tr>`;
+        }
+        sampleHTML += `</tbody>`;
+        $('#data-table').html(sampleHTML);
+        
+        // Update column count badge
+        let colCount = $('#data-table thead th').length;
+        $('#col-count').text(colCount);
+      }
+      
+      // ========== DATATABLES INITIALIZATION (KEEP THIS IN DJANGO) ==========
+      // This enhances the table with search, sort, pagination
+      // It works on both sample and real {{ col }} data
+      
+      $('#data-table').DataTable({
+        responsive: true,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        order: [[0, 'asc']],
+        language: {
+          search: "_INPUT_",
+          searchPlaceholder: "Search dataset...",
+          lengthMenu: "Show _MENU_ entries",
+          info: "Showing _START_ to _END_ of _TOTAL_ rows",
+          paginate: {
+            first: '<i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i>',
+            previous: '<i class="fas fa-chevron-left"></i>',
+            next: '<i class="fas fa-chevron-right"></i>',
+            last: '<i class="fas fa-chevron-right"></i><i class="fas fa-chevron-right"></i>'
+          }
+        },
+        initComplete: function() {
+          // Update column count based on actual table
+          let colCount = $('#data-table thead th').length;
+          $('#col-count').text(colCount);
+        }
+      });
+      
+      // In Django: your actual implementation only needs:
+      // 1. The DataTable initialization (above)
+      // 2. The table with {{ col|safe }} inside
+      // 3. Remove the sample generation if-block
+    });
+  </script>
+
+  <!-- 
+    ============================================================
+    DJANGO INTEGRATION INSTRUCTIONS (visible as comment)
+    ============================================================
+    1. Place this template in your app/templates/view_dataset.html
+    2. In views.py, your view_dataset function is perfect:
+       def view_dataset(request):
+           df = pd.read_csv('app/Final_dataset.csv')
+           column = df.head(200).to_html()
+           return render(request, 'view_dataset.html', {'col': column})
+    3. The table will automatically render with DataTables features.
+    4. Remove the sample generation code (lines 340-414) from script.
+    5. Ensure {{ col|safe }} is used (not {{ col }}).
+  -->
+</body>
+</html>

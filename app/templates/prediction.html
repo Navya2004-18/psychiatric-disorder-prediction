@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Predict · MindScope | EEG-Based Psychiatric Assessment</title>
+  <!-- Google Fonts + Font Awesome – consistent design system -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ---------- GLOBAL (identical to all pages) ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f8fd;
+      color: #1e2f3e;
+      line-height: 1.5;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ---------- ANIMATIONS ---------- */
+    @keyframes fadeSlideUp {
+      0% { opacity: 0; transform: translateY(24px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes floatSoft {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .animate-up {
+      animation: fadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.2, 1) forwards;
+    }
+
+    /* ---------- NAVBAR (exact same as all pages) ---------- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .logo i {
+      color: #0f2b4b;
+      font-size: 1.9rem;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover i {
+      transform: scale(1.08) rotate(2deg);
+    }
+
+    .logo span {
+      background: linear-gradient(145deg, #0b2f4e, #1d4a6e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-weight: 500;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding-bottom: 6px;
+      color: #1e3a5f;
+      font-size: 1.05rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a i {
+      margin-right: 6px;
+      font-size: 0.9rem;
+      color: #3a6b92;
+      transition: transform 0.2s;
+    }
+
+    .nav-links a:hover i {
+      transform: translateX(3px);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 2.5px;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+      transition: width 0.25s ease-out;
+      border-radius: 4px;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* active page: Predict (custom) */
+    .nav-links a.active {
+      font-weight: 700;
+      color: #0a3a5c;
+    }
+    .nav-links a.active::after {
+      width: 100%;
+      background: linear-gradient(90deg, #1d4e6e, #389ec7);
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+    }
+
+    .btn-outline {
+      border: 1.5px solid #1e4a6b;
+      background: transparent;
+      padding: 0.5rem 1.3rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #1e4a6b;
+      transition: all 0.25s;
+    }
+
+    .btn-outline i {
+      margin-right: 5px;
+    }
+
+    .btn-outline:hover {
+      background: #1e4a6b;
+      color: white;
+      border-color: #1e4a6b;
+      box-shadow: 0 8px 14px -6px rgba(30, 74, 107, 0.25);
+      transform: scale(0.98);
+    }
+
+    .btn-solid {
+      background: #0e3347;
+      border: none;
+      padding: 0.5rem 1.6rem;
+      border-radius: 40px;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+      box-shadow: 0 6px 14px rgba(14, 51, 71, 0.15);
+    }
+
+    .btn-solid:hover {
+      background: #1d4f6e;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 20px -10px rgba(14, 51, 71, 0.25);
+    }
+
+    /* ---------- PREDICTION PAGE SPECIFIC ---------- */
+    .prediction-hero {
+      background: linear-gradient(135deg, #e2f0f7, #d0e6f0);
+      padding: 3rem 5% 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prediction-hero::before {
+      content: "⚡🧠⚡";
+      position: absolute;
+      font-size: 14rem;
+      opacity: 0.02;
+      bottom: -30px;
+      right: 20px;
+      transform: rotate(8deg);
+      pointer-events: none;
+    }
+
+    .page-header {
+      max-width: 1300px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .page-header h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #083c50;
+      letter-spacing: -1px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .page-header h1 span {
+      background: linear-gradient(145deg, #0e647b, #248ca8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-header p {
+      font-size: 1.2rem;
+      color: #2e687b;
+      max-width: 700px;
+      margin-top: 0.5rem;
+      font-weight: 300;
+    }
+
+    /* ---------- FORM CARD (glass) ---------- */
+    .form-card {
+      max-width: 1300px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 56px;
+      padding: 2.8rem 3rem;
+      box-shadow: 0 35px 60px -30px rgba(15, 100, 120, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.2s;
+      animation: floatSoft 8s infinite ease-in-out;
+    }
+
+    .form-card:hover {
+      box-shadow: 0 45px 70px -30px rgba(18, 118, 138, 0.3);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    /* form grid: 2 columns */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.8rem 2.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #1b5f73;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.2px;
+    }
+
+    .form-group label i {
+      color: #23809b;
+      font-size: 1rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper i.prefix-icon {
+      position: absolute;
+      left: 16px;
+      color: #548e9f;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    .input-wrapper input,
+    .input-wrapper select {
+      width: 100%;
+      padding: 0.9rem 1rem 0.9rem 2.8rem;
+      border: 1.8px solid rgba(70, 158, 173, 0.2);
+      border-radius: 40px;
+      font-size: 1rem;
+      background: white;
+      transition: all 0.2s ease;
+      color: #1a4a5a;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      appearance: none;
+    }
+
+    .input-wrapper select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%23388294'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 18px center;
+      background-size: 20px;
+    }
+
+    .input-wrapper input:focus,
+    .input-wrapper select:focus {
+      border-color: #2f9bb5;
+      box-shadow: 0 8px 20px rgba(38, 140, 160, 0.12);
+      outline: none;
+    }
+
+    .input-wrapper input::placeholder {
+      color: #9bbac8;
+      font-weight: 300;
+    }
+
+    /* two select fields: sex, education */
+    .select-group {
+      display: flex;
+      gap: 1rem;
+      grid-column: span 2;
+    }
+
+    .select-item {
+      flex: 1;
+    }
+
+    /* hint text for EEG features */
+    .feature-hint {
+      font-size: 0.7rem;
+      color: #398196;
+      margin-left: 1rem;
+      margin-top: 0.2rem;
+      opacity: 0.8;
+      letter-spacing: 0.2px;
+    }
+
+    /* action buttons */
+    .form-actions {
+      grid-column: span 2;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-predict {
+      background: linear-gradient(105deg, #146d82, #2092ad);
+      border: none;
+      padding: 1.1rem 3.5rem;
+      border-radius: 60px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.2s;
+      box-shadow: 0 18px 30px -14px #0f6a7a;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .btn-predict i {
+      font-size: 1.2rem;
+    }
+
+    .btn-predict:hover {
+      background: linear-gradient(105deg, #0e5a6b, #197d96);
+      transform: scale(1.02) translateY(-4px);
+      box-shadow: 0 28px 38px -18px #0a5f6e;
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: 2px solid #208098;
+      padding: 1.1rem 3rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #166d82;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+
+    .btn-reset:hover {
+      background: rgba(32, 128, 152, 0.05);
+      border-color: #32a1bb;
+      transform: translateY(-2px);
+    }
+
+    /* results panel (hidden until predict) */
+    .results-panel {
+      max-width: 1300px;
+      margin: 3rem auto 0;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(12px);
+      border-radius: 48px;
+      padding: 2rem 2.5rem;
+      border: 1px solid rgba(255,255,255,0.7);
+      display: none; /* hidden by default, shown after predict */
+    }
+
+    .results-panel.active {
+      display: block;
+      animation: fadeSlideUp 0.5s;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 1.5rem;
+    }
+
+    .results-header i {
+      font-size: 2.2rem;
+      color: #1f7e96;
+    }
+
+    .results-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0a4d5e;
+    }
+
+    .prediction-badge {
+      background: linear-gradient(145deg, #1f758b, #2096b3);
+      color: white;
+      padding: 1.2rem 2.5rem;
+      border-radius: 60px;
+      font-size: 2rem;
+      font-weight: 800;
+      display: inline-block;
+      box-shadow: 0 10px 18px rgba(16, 110, 125, 0.2);
+    }
+
+    .confidence-meter {
+      margin-top: 1.2rem;
+      height: 12px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 30px;
+      width: 300px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      width: 87%;
+      background: linear-gradient(90deg, #19778f, #2eaec9);
+      border-radius: 30px;
+    }
+
+    /* ---------- FOOTER (consistent) ---------- */
+    footer {
+      background: #0b1f2c;
+      color: #b1d4e0;
+      padding: 2.5rem;
+      text-align: center;
+      font-size: 0.95rem;
+      margin-top: 4rem;
+    }
+    footer a { color: #b1d4e0; }
+    footer a:hover { color: white; }
+
+    @media (max-width: 900px) {
+      .navbar { flex-direction: column; }
+      .nav-links { gap: 1rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .full-width, .select-group, .form-actions { grid-column: span 1; }
+      .select-group { flex-direction: column; }
+      .form-card { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== NAVBAR (active: Predict) ========= -->
+  <nav class="navbar">
+    <div class="logo">
+      <i class="fas fa-brain"></i>
+      <span>MindScope</span>
+    </div>
+        <div class="nav-links">
+      <a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
+      <a href="{% url 'view_dataset' %}"><i class="fas fa-microscope"></i> View Dataset</a>
+      <a href="{% url 'prediction' %}" class="register-highlight"><i class="fas fa-pen-to-square"></i> Prediction</a>
+      <a href="{% url 'logout' %}"><i class="fas fa-key"></i> Logout</a>
+    </div>
+  </nav>
+
+  <!-- ========== PREDICTION PAGE ========== -->
+  <section class="prediction-hero">
+    <div class="page-header animate-up">
+      <h1>
+        <i class="fas fa-microchip" style="color: #1f7f99;"></i>
+        <span>Psychiatric Disorder</span> Prediction
+      </h1>
+      <p>Enter subject demographics and EEG-derived features. The ensemble model will output risk profile for major disorders.</p>
+      <center>
+        {% if msg %}
+            <h2> {{msg}} </h2>
+        {% endif %}
+      </center>
+    </div>
+
+    <!-- MAIN PREDICTION FORM CARD -->
+    <div class="form-card animate-up" style="animation-delay: 0.1s;">
+      <form id="predictionForm" action="{% url 'prediction' %}" method="post">
+        {% csrf_token %}
+        <div class="form-grid">
+          <!-- ===== 2 SELECT TAGS (sex, education) ===== -->
+          <!-- Sex select (first select) -->
+          <div class="form-group select-item">
+            <label><i class="fas fa-venus-mars"></i> Gender *</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user prefix-icon"></i>
+              <select name="num1" required>
+                <option value="" disabled selected>– Select Gender –</option>
+                <option value="1">Male</option>
+                <option value="0">Female</option>
+               
+              </select>
+            </div>
+          </div>
+
+          <!-- Education select (second select) -->
+          <div class="form-group select-item">
+            <label><i class="fas fa-graduation-cap"></i> Education level *</label>
+            <div class="input-wrapper">
+              <i class="fas fa-school prefix-icon"></i>
+              <select name="num3" required>
+                <option value="" disabled selected>– Select highest level –</option>
+                <option value="11">Less than high school</option>
+                <option value="12">High school / GED</option>
+                <option value="13">Some college</option>
+                <option value="14">Bachelor's degree</option>
+                <option value="15">Master's degree</option>
+                <option value="16">Doctorate / professional</option>
+                <option value="17">Others</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Age (numeric) -->
+          <div class="form-group">
+            <label><i class="fas fa-calendar-alt"></i> Age (years)</label>
+            <div class="input-wrapper">
+              <i class="fas fa-hourglass-half prefix-icon"></i>
+              <input type="number" step="1" min="18" max="90" placeholder="e.g. 34" name="num2">
+            </div>
+          </div>
+
+          <!-- IQ (numeric) -->
+          <div class="form-group">
+            <label><i class="fas fa-brain"></i> IQ score</label>
+            <div class="input-wrapper">
+              <i class="fas fa-chart-bar prefix-icon"></i>
+              <input type="number" step="1" min="50" max="150" placeholder="Full scale IQ" name="num4">
+            </div>
+          </div>
+
+          <!-- ===== EEG FEATURES (13 fields exactly as specified) ===== -->
+          <!-- AB.A.delta.q.T6 -->
+          <div class="form-group">
+            <label><i class="fas fa-wave-square"></i> AB.A.delta.q.T6</label>
+            <div class="input-wrapper">
+              <i class="fas fa-chart-line prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num5">
+            </div>
+            <div class="feature-hint">delta, T6 electrode</div>
+          </div>
+
+          <!-- AB.D.beta.a.FP1 -->
+          <div class="form-group">
+            <label><i class="fas fa-wave-square"></i> AB.D.beta.a.FP1</label>
+            <div class="input-wrapper">
+              <i class="fas fa-chart-line prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num6">
+            </div>
+          </div>
+
+          <!-- AB.D.beta.b.FP2 -->
+          <div class="form-group">
+            <label><i class="fas fa-wave-square"></i> AB.D.beta.b.FP2</label>
+            <div class="input-wrapper">
+              <i class="fas fa-chart-line prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num7">
+            </div>
+          </div>
+
+          <!-- AB.D.beta.e.Fz -->
+          <div class="form-group">
+            <label><i class="fas fa-wave-square"></i> AB.D.beta.e.Fz</label>
+            <div class="input-wrapper">
+              <i class="fas fa-chart-line prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num8">
+            </div>
+          </div>
+
+          <!-- AB.D.beta.f.F4 -->
+          <div class="form-group">
+            <label><i class="fas fa-wave-square"></i> AB.D.beta.f.F4</label>
+            <div class="input-wrapper">
+              <i class="fas fa-chart-line prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num9">
+            </div>
+          </div>
+
+          <!-- AB.D.beta.g.F8 -->
+          <div class="form-group">
+            <label><i class="fas fa-wave-square"></i> AB.D.beta.g.F8</label>
+            <div class="input-wrapper">
+              <i class="fas fa-chart-line prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num10">
+            </div>
+          </div>
+
+          <!-- COH.A.delta.m.T5.n.P3 -->
+          <div class="form-group">
+            <label><i class="fas fa-link"></i> COH.A.delta.m.T5.n.P3</label>
+            <div class="input-wrapper">
+              <i class="fas fa-project-diagram prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num11">
+            </div>
+          </div>
+
+          <!-- COH.B.theta.a.FP1.e.Fz -->
+          <div class="form-group">
+            <label><i class="fas fa-link"></i> COH.B.theta.a.FP1.e.Fz</label>
+            <div class="input-wrapper">
+              <i class="fas fa-project-diagram prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num12">
+            </div>
+          </div>
+
+          <!-- COH.B.theta.b.FP2.e.Fz -->
+          <div class="form-group">
+            <label><i class="fas fa-link"></i> COH.B.theta.b.FP2.e.Fz</label>
+            <div class="input-wrapper">
+              <i class="fas fa-project-diagram prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num13">
+            </div>
+          </div>
+
+          <!-- COH.C.alpha.a.FP1.e.Fz -->
+          <div class="form-group">
+            <label><i class="fas fa-link"></i> COH.C.alpha.a.FP1.e.Fz</label>
+            <div class="input-wrapper">
+              <i class="fas fa-project-diagram prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num14">
+            </div>
+          </div>
+
+          <!-- COH.C.alpha.n.P3.r.O1 -->
+          <div class="form-group">
+            <label><i class="fas fa-link"></i> COH.C.alpha.n.P3.r.O1</label>
+            <div class="input-wrapper">
+              <i class="fas fa-project-diagram prefix-icon"></i>
+              <input type="number" step="0.001" placeholder="0.000" name="num15">
+            </div>
+          </div>
+          <!-- Note: we have 13 EEG fields + age, IQ, and two selects. total 17 input elements but 2 are selects. matches spec: 13 inputs + 2 selects + age + IQ = 17 fields, correct. -->
+        </div> <!-- end form-grid -->
+
+        <!-- form actions -->
+        <div class="form-actions">
+          <button type="submit" class="btn-predict" onclick="showPrediction()">
+            <i class="fas fa-flask"></i> Run prediction
+          </button>
+          <button type="reset" class="btn-reset">
+            <i class="fas fa-undo-alt"></i> Clear all
+          </button>
+        </div>
+      </form>
+    </div>
+
+    
+
+  
+
+
+
+</body>
+</html>
